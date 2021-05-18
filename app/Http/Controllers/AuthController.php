@@ -20,8 +20,11 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $fields['name'],
             'email' => $fields['email'],
-            'password' => bcrypt($fields['password'])
+            'password' => bcrypt($fields['password']),
         ]);
+
+        // automatically assign 'writer' role to new users
+        // $user->assignRole('writer');
 
         $token = $user->createToken('myapptoken')->plainTextToken;
 
@@ -46,9 +49,17 @@ class AuthController extends Controller
         // Check password
         if (!$user || !Hash::check($fields['password'], $user->password)) {
             return response([
-                'message' => 'Bad credentials'
+                'message' => 'Wrong Credentials'
             ], 401);
         }
+        $token = $user->createToken('myapptoken')->plainTextToken;
+
+        $response = [
+            'user' => $user,
+            'token' => $token
+        ];
+
+        return response($response, 201);
     }
 
     public function logout(Request $request)

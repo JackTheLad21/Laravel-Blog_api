@@ -25,14 +25,17 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
-
-        $request->validate([
+        $this->authorize('create');
+        $data = $request->validate([
+            'category_id' => 'required',
             'title' => 'required',
             'abstract' => 'required',
             'contents' => 'required'
         ]);
+        $data['user_id'] = $request->user()->id;
+        // return $data;
 
-        return Article::create($request->all());
+        return Article::create($data);
     }
 
     /**
@@ -56,6 +59,7 @@ class ArticleController extends Controller
     public function update(Request $request, $id)
     {
         $article = Article::find($id);
+        $this->authorize('update', $article);
         $article->update($request->all());
         return $article;
     }
@@ -68,7 +72,7 @@ class ArticleController extends Controller
      */
     public function destroy($id)
     {
-        //
+        // return Article::destroy($id);
     }
 
     /**

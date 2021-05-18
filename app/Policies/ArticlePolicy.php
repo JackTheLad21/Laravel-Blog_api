@@ -41,7 +41,7 @@ class ArticlePolicy
      * @param  \App\Models\User  $user
      * @return mixed
      */
-    public function create(User $user, Article $article): bool
+    public function create(User $user): bool
     {
         // return $user->role_name === 'writer' || $user->role_name === 'editor';
         // return isWriter($user) || isEditor($user);
