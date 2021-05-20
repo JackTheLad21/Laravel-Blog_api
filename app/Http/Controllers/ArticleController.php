@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use Illuminate\Http\Request;
+use App\Http\Requests\ArticleRequest;
 
 class ArticleController extends Controller
 {
@@ -20,18 +21,13 @@ class ArticleController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\ArticleRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ArticleRequest $request)
     {
         $this->authorize('create');
-        $data = $request->validate([
-            'category_id' => 'required',
-            'title' => 'required',
-            'abstract' => 'required',
-            'contents' => 'required'
-        ]);
+        $data = $request->validated();
         $data['user_id'] = $request->user()->id;
         // return $data;
 
@@ -56,7 +52,7 @@ class ArticleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(ArticleRequest $request, $id)
     {
         $article = Article::find($id);
         $this->authorize('update', $article);
@@ -64,7 +60,6 @@ class ArticleController extends Controller
         // dump($request->all());
         return $article;
     }
-    //! payload vuoto. Su insomnia ricordati di passare la richiesta con un json e non con un form multipart.
 
     /**
      * Remove the specified resource from storage.
