@@ -58,4 +58,9 @@ class User extends Authenticatable
     {
         return $this->hasRole('editor');
     }
+
+    public function isStaff(): bool
+    {
+        return $this->hasRole(['writer', 'editor']);
+    }
 }

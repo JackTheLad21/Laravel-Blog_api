@@ -4,8 +4,6 @@ namespace App\Policies;
 
 use App\Models\Article;
 use App\Models\User;
-use App\Models\Role;
-// use Spatie\Permission\Contracts\Role;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ArticlePolicy
@@ -30,9 +28,15 @@ class ArticlePolicy
      * @param  \App\Models\Article  $article
      * @return mixed
      */
-    public function view(User $user, Article $article)
+    public function view(User $user, Article $article): bool
     {
-        //
+        if ($user->isStaff() === true) {
+            return true;
+        };
+
+        if ($user->isStaff() === false && $article->published_at !== null) {
+            return true;
+        };
     }
 
     /**
@@ -43,9 +47,7 @@ class ArticlePolicy
      */
     public function create(User $user): bool
     {
-        // return $user->role_name === 'writer' || $user->role_name === 'editor';
-        // return isWriter($user) || isEditor($user);
-        return ($user->isEditor() || $user->isWriter());
+        return $user->isStaff();
     }
 
     /**
@@ -55,19 +57,27 @@ class ArticlePolicy
      * @param  \App\Models\Article  $article
      * @return bool
      */
-    public function update(User $user, Article $article, Role $role): bool
+    public function update(User $user, Article $article): bool
     {
-        if ($user->id === $article->user_id) {
+        $author = $article->user_id;
+
+        if ($user->isEditor()) {
+
+            if ($author->isWriter()) {
+                return true;
+            }
+
+            if ($author->isEditor()) {
+                if ($user->id === $author) {
+                    return true;
+                }
+            }
+        }
+
+        if ($user->isWriter() && $user->id === $author && ($article->published_at === null)) {
             return true;
         }
 
-        if ($user->isEditor() && (($article->user_id === $role->model_id) && $role->role_id === 1)) {
-            return true;
-        }
-
-        if ($user->isWriter() && ($article->published_at !== null)) {
-            return false;
-        }
         return false;
     }
 

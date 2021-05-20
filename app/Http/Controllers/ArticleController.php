@@ -61,8 +61,10 @@ class ArticleController extends Controller
         $article = Article::find($id);
         $this->authorize('update', $article);
         $article->update($request->all());
+        // dump($request->all());
         return $article;
     }
+    //! payload vuoto. Su insomnia ricordati di passare la richiesta con un json e non con un form multipart.
 
     /**
      * Remove the specified resource from storage.
