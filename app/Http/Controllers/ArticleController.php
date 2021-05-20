@@ -26,11 +26,9 @@ class ArticleController extends Controller
      */
     public function store(ArticleRequest $request)
     {
-        $this->authorize('create');
+        $this->authorize('create', Article::class);
         $data = $request->validated();
         $data['user_id'] = $request->user()->id;
-        // return $data;
-
         return Article::create($data);
     }
 
@@ -57,7 +55,6 @@ class ArticleController extends Controller
         $article = Article::find($id);
         $this->authorize('update', $article);
         $article->update($request->all());
-        // dump($request->all());
         return $article;
     }
 

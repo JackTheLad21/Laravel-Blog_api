@@ -30,13 +30,13 @@ class ArticlePolicy
      */
     public function view(User $user, Article $article): bool
     {
-        if ($user->isStaff() === true) {
-            return true;
-        };
+        // if ($user->isStaff() === true) {
+        //     return true;
+        // };
 
-        if ($user->isStaff() === false && $article->published_at !== null) {
-            return true;
-        };
+        // if ($user->isStaff() === false && $article->published_at !== null) {
+        //     return true;
+        // };
     }
 
     /**
