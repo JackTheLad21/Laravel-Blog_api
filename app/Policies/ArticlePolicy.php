@@ -30,13 +30,17 @@ class ArticlePolicy
      */
     public function view(User $user, Article $article): bool
     {
-        // if ($user->isStaff() === true) {
-        //     return true;
-        // };
+        if ($user->isStaff() === true) {
+            return true;
+        };
 
-        // if ($user->isStaff() === false && $article->published_at !== null) {
-        //     return true;
-        // };
+        if ($user->isStaff() === false) {
+            if ($article->published_at !== null) {
+                return true;
+            }
+        };
+
+        return false;
     }
 
     /**
@@ -59,23 +63,24 @@ class ArticlePolicy
      */
     public function update(User $user, Article $article): bool
     {
-        $author = $article->user_id;
+        $author = $article->author;
 
         if ($user->isEditor()) {
-
             if ($author->isWriter()) {
                 return true;
             }
 
             if ($author->isEditor()) {
-                if ($user->id === $author) {
+                if ($user->id === $author->id) {
                     return true;
                 }
             }
         }
 
-        if ($user->isWriter() && $user->id === $author && ($article->published_at === null)) {
-            return true;
+        if ($user->isWriter()) {
+            if (($user->id === $author->id) && ($article->published_at === null)) {
+                return true;
+            }
         }
 
         return false;
